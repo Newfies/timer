@@ -22,6 +22,7 @@
         #countdown {
             font-size: 3em;
             margin-top: 20px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -32,15 +33,18 @@
     <div id="countdown">Loading...</div>
 </div>
 
-<script>
+<script>    
     const targetDate = new Date("2026-05-17T20:00:00-05:00").getTime();
+    let timeAsString = "";
 
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = targetDate - now;
 
         if (distance <= 0) {
-            document.getElementById("countdown").innerHTML = "Time's up!";
+            timeAsString = "Time's up!";
+            document.getElementById("countdown").innerHTML = timeAsString;
+            document.title = "Countdown Timer | Time's up!";
             return;
         }
 
@@ -49,9 +53,19 @@
         const minutes = Math.floor((distance / (1000 * 60)) % 60);
         const seconds = Math.floor((distance / 1000) % 60);
 
-        document.getElementById("countdown").innerHTML =
-            `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        timeAsString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+        document.getElementById("countdown").innerHTML = timeAsString;
+        document.title = `Countdown Timer | ${timeAsString}`;
     }
+    
+    document.getElementById("countdown").addEventListener("click", function(){
+        navigator.clipboard.writeText(timeAsString).then(() => {
+            alert("Copied: " + timeAsString);
+        }).catch(err => {
+            console.error("Failed to copy:", err);
+        });
+    });
 
     updateCountdown();
     setInterval(updateCountdown, 1000);
